@@ -149,7 +149,7 @@ namespace VMConsole {
             WriteLine();
 
             string description = ch.ReadString($"Description ({p.Description})");
-            string usage = ch.ReadString($"Usage ({p.Description})");
+            string usage = ch.ReadString($"Usage ({p.Usage})");
             int? price = ch.ReadIntOrNull($"Price ({p.Price})");
 
             bool success = VM!.TryChangeCustomProduct(p.Name, description, usage, price);

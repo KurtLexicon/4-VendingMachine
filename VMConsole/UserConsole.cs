@@ -37,8 +37,25 @@ namespace VMConsole {
                 ProductDictionary pd = new(VM);
                 WriteLine("Choose from menu:");
                 WriteLine();
+                int startPdLine = CursorTop;
                 WriteMenuList(pd);
                 WriteLine();
+
+                void ModifyPd() {
+                    int saveLine = CursorTop;
+                    int saveCol = CursorLeft;
+                    CursorTop = startPdLine;
+                    CursorLeft = 0;
+                    int nLines = pd.Count + 2; // Add 2 lines for items 0 & 99
+                    for (int i = 0; i < nLines; i++) {
+                        WriteLine(new string(' ', WindowWidth));
+                    }
+                    CursorTop = startPdLine;
+                    CursorLeft = 0;
+                    WriteMenuList(pd);
+                    CursorTop = saveLine;
+                    CursorLeft = saveCol;
+                }
 
                 int menuItem = ch.ReadInt("Enter your choice");
                 switch (menuItem) {
@@ -46,19 +63,19 @@ namespace VMConsole {
                         ch.Delimiter('=');
                         ch.WriteCentered("");
                         ch.Delimiter('=');
-                        EnterMoneySection(1);
+                        EnterMoneySection(1, ModifyPd);
                         return;
                     case 99:
                         ShowEndTransactionScreen();
                         return;
                     default:
-                        DoPurchase(menuItem, pd);
+                        DoPurchase(menuItem, pd, ModifyPd);
                         break;
                 }
             }
         }
 
-        private void EnterMoneySection(int headerLine) {
+        private void EnterMoneySection(int headerLine, Action successAction) {
             string startMessage = "";
             while (true) {
                 int startLine = Console.CursorTop;
@@ -89,6 +106,7 @@ namespace VMConsole {
                 }
 
                 VM.InsertMoney(coinSize);
+                successAction?.Invoke();
                 WriteBalanceHeader(headerLine);
                 startMessage = $"You added {VM.AmountString(coinSize)}";
                 ClearConsolFrom(startLine);
@@ -118,7 +136,7 @@ namespace VMConsole {
             Console.CursorLeft = 0;
         }
 
-        private void DoPurchase(int menuKey, ProductDictionary productDictionary) {
+        private void DoPurchase(int menuKey, ProductDictionary productDictionary, Action modifyPdList) {
             if (productDictionary.TryGetValue(menuKey, out Product? p)) {
                 string usage;
                 try {
@@ -129,7 +147,7 @@ namespace VMConsole {
                     ch.WriteCentered("Your Balance is too low for the chosen product");
                     ch.WriteCentered("Please enter more money to buy this product");
                     ch.Delimiter('=');
-                    EnterMoneySection(1);
+                    EnterMoneySection(1, modifyPdList);
                     return;
                 }
 

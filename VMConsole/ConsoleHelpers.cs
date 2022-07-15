@@ -23,17 +23,20 @@ namespace VMConsole {
         public const int width = 60;
         private int? exitCode = null;
 
-
         public void SetExitCode(int exitCode) {
             this.exitCode = exitCode;
         }
 
+        // =========================
+        // Output helpers
+        // =========================
+
         public void Header(string header) {
             header ??= "";
             Clear();
-            WriteLine(new string('=', width));
-            WriteLine(Center(header, width));
-            WriteLine(new string('=', width));
+            Delimiter('=');
+            WriteCentered(header);
+            Delimiter('=');
             WriteLine();
         }
 
@@ -50,6 +53,10 @@ namespace VMConsole {
             int nPad = Math.Max(0, (width + str.Length) / 2);
             return str.PadLeft(nPad);
         }
+
+        // =========================
+        // Input helpers
+        // =========================
 
         public void WaitKey(string? prompt = null) {
             WriteLine();
@@ -153,6 +160,10 @@ namespace VMConsole {
             }
         }
 
+        // =========================
+        // Menu Helpers
+        // =========================
+
         public bool MenuScreen(
             string header1,
             string header2,
@@ -195,13 +206,13 @@ namespace VMConsole {
                 menuItems,
                 item => item.Text,
                 prompt,
-                new MenuItem(returnPrompt, DoExit, false));
+                new MenuItem(returnPrompt, Nothing, false));
             if (item.Text == "") return false;
             item.Action();
             return item.ContinueLoop;
         }
 
-        void DoExit() {
+        private void Nothing() {
             return;
         }
 
@@ -232,6 +243,11 @@ namespace VMConsole {
                 ResetCursor(startLine);
             }
         }
+
+
+        // =========================
+        // Misc
+        // =========================
 
         void ResetCursor(int startLine, string str = "") {
             int endLine = Console.CursorTop;
