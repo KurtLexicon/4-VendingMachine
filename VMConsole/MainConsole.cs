@@ -39,29 +39,25 @@ namespace VMConsole {
             return true;
         }
 
-        private bool RunAdminUI() {
+        private void RunAdminUI() {
             new AdminConsole(VM!).Run();
-            return true;
         }
 
-        private bool RunUserUI() {
+        private void RunUserUI() {
             ch.WaitKey($"To return to the Main Menu enter the secret code {exitCode} at any time");
             new CustomerConsole(VM!).Run(exitCode);
-            return true;
         }
 
-        private bool DoExit() {
+        private void DoExit() {
             VM = null;
-            return false;
         }
 
-        private bool CreateDefaultMachine() {
+        private void CreateDefaultMachine() {
             VM = new();
             ch.Delimiter();
-            return true;
         }
 
-        private bool CreateMachineScreen() {
+        private void CreateMachineScreen() {
             ch.Header("Create an new Vending Machine");
 
             // Select currency
@@ -94,7 +90,6 @@ namespace VMConsole {
             } else {
                 ch.WaitKey("The machine has NOT been started");
             }
-            return false;
         }
     }
 }

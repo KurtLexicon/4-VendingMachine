@@ -20,8 +20,8 @@ namespace VMConsole {
             while (ConfigureVM()) { }
         }
 
-        private bool ReturnFalse() {
-            return false;
+        private void Nothing() {
+            return;
         }
 
         private bool ConfigureVM() {
@@ -29,7 +29,7 @@ namespace VMConsole {
                 "Configure Products",
                 "What do you want to do?",
                 new List<MenuItem> {
-                    new MenuItem("Return to main menu", ReturnFalse, false ),
+                    new MenuItem("Return to main menu", Nothing, false ),
                     new MenuItem("List all products", ListAllProductsScreen, true ),
                     new MenuItem("List custom products", ListCustomProductsScreen, true ),
                     new MenuItem("Add a new custom product", AddProductScreen, true ),
@@ -41,36 +41,34 @@ namespace VMConsole {
             );
         }
 
-        private bool ListAllProductsScreen() {
+        private void ListAllProductsScreen() {
             ch.Header("All products");
             List<Product> products = VM.ShowAll();
 
             products.ForEach(p => WriteLine(p.Examine()));
             ch.WaitKey();
-            return true;
         }
 
-        private bool ListCustomProductsScreen() {
+        private void ListCustomProductsScreen() {
             ch.Header("Custom products");
             List<Product> products = VM.GetCustomProducts();
             if (products.Count == 0) {
                 ch.WaitKey("There do not exist any custom products");
-                return true;
+                return;
             }
 
             products.ForEach(p => WriteLine(p.Examine()));
             ch.WaitKey();
-            return true;
         }
 
-        private bool AddProductScreen() {
+        private void AddProductScreen() {
             while (true) {
                 ch.Header("Create a new product and add to the machine");
 
                 WriteLine("Leave name blank (Just press ENTER) for exit");
 
                 string name = ch.ReadString("Name");
-                if (string.IsNullOrWhiteSpace(name)) return true;
+                if (string.IsNullOrWhiteSpace(name)) return;
 
                 string description = ch.ReadNotEmptyString("Description");
                 string usage = ch.ReadNotEmptyString("Usage");
@@ -98,13 +96,13 @@ namespace VMConsole {
             }
         }
 
-        private bool RemoveProductScreen() {
+        private void RemoveProductScreen() {
             ch.Header("Remove an existing custom product from the machine");
 
             List<Product> products = VM.GetCustomProducts();
             if (products.Count == 0) {
                 ch.WaitKey("There do not exist any custom products");
-                return true;
+                return;
             }
 
             Product? productToRemove = ch.SelectMenu(
@@ -120,16 +118,15 @@ namespace VMConsole {
                     VM.TryRemoveCustomProduct(productToRemove.Name);
                 }
             }
-            return true;
         }
 
-        private bool ChangeProductScreen() {
+        private void ChangeProductScreen() {
             ch.Header("Modify an existing custom product in the machine");
 
             List<Product> products = VM.GetCustomProducts();
             if (products.Count == 0) {
                 ch.WaitKey("There do not exist any custom products");
-                return true;
+                return;
             }
 
             Product? productToChange = ch.SelectMenu(
@@ -143,7 +140,6 @@ namespace VMConsole {
             if (productToChange != null) {
                 DoChangeProduct(productToChange);
             }
-            return true;
         }
 
         private void DoChangeProduct(Product p) {

@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 using static System.Console;
 
 namespace VMConsole {
-    public delegate bool BoolAction();
-
     public struct MenuItem {
         public string Text { get; }
-        public BoolAction Action { get; }
+        public Action Action { get; }
         public bool ContinueLoop { get; }
 
-        public MenuItem(string text, BoolAction action, bool continueLoop) {
+        public MenuItem(string text, Action action, bool continueLoop) {
             Text = text;
             Action = action;
             ContinueLoop = continueLoop;
@@ -203,8 +201,8 @@ namespace VMConsole {
             return item.ContinueLoop;
         }
 
-        public bool DoExit() {
-            return false;
+        void DoExit() {
+            return;
         }
 
         public T SelectMenu<T>(
